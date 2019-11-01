@@ -18,6 +18,7 @@ def cut(l, p, dp, left, right):
 if __name__ == '__main__':
     l = 10
     p = [1, 3, 6]
+    # Add start and end as dummy point
     p = [0, *p, l]
     dp = [[0 for _ in range(len(p))] for _ in range(len(p))]
     cut(l, p, dp, 0, len(p) - 1)
