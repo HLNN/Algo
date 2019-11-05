@@ -1,33 +1,25 @@
-def middle(nums, sumLeft, sumRight):
-    leftList = []
-    rightList = []
-    lSum = 0
-    rSum = 0
-
-    # Using nums[0] to divide nums
-    x = nums[0]
-    for i in range(1, len(nums)):
-        if nums[i] < x:
-            leftList.append(nums[i])
-            lSum += nums[i]
-        else:
-            rightList.append(nums[i])
-            rSum += nums[i]
-
-    if sumLeft + lSum <= 0.5 and sumRight + rSum <= 0.5:
-        # If both smaller than 0.5, nums[0] is what we find
-        return nums[0]
+def middle(nums, left, right):
+    mid = (left + right) // 2
+    if sum(n['weight'] for n in nums[0:mid]) <= 0.5 and sum(n['weight'] for n in nums[mid + 1:len(nums)]) <= 0.5:
+        return mid
     else:
-        # If not, redo with the big side
-        if sumLeft + lSum > 0.5:
-            return middle(leftList, sumLeft, sumRight + rSum + nums[0])
+        if sum(num['weight'] for num in nums[0:mid]) > 0.5:
+            return middle(nums, left, mid)
         else:
-            return middle(rightList, sumLeft + lSum + nums[0], sumRight)
+            return middle(nums, mid + 1, right)
 
 
 if __name__ == '__main__':
-    nums = [0.1, 0.2, 0.3, 0.4]
-    if sum(nums) == 1:
-        print(middle(nums, 0, 0))
+    def getValue(elem):
+        return elem['value']
+
+    nums = [{'value': 1, 'weight': 0.1},
+            {'value': 4, 'weight': 0.2},
+            {'value': 2, 'weight': 0.3},
+            {'value': 5, 'weight': 0.4}]
+    nums.sort(key=getValue)
+
+    if sum(num['weight'] for num in nums) == 1:
+        print(middle(nums, 0, len(nums)))
     else:
         print('input wrong: ', sum(nums))
