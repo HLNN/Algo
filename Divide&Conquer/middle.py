@@ -1,12 +1,14 @@
-def middle(nums, left, right):
+def middle(nums, left, right, lSum, rSum):
     mid = (left + right) // 2
-    if sum(n['weight'] for n in nums[0:mid]) <= 0.5 and sum(n['weight'] for n in nums[mid + 1:len(nums)]) <= 0.5:
-        return mid
+    lSumNew = sum(n['weight'] for n in nums[left:mid])
+    rSumNew = sum(n['weight'] for n in nums[mid + 1:right])
+    if lSum + lSumNew <= 0.5 and rSum + rSumNew <= 0.5:
+        return nums[mid]['value']
     else:
-        if sum(num['weight'] for num in nums[0:mid]) > 0.5:
-            return middle(nums, left, mid)
+        if lSum + lSumNew > 0.5:
+            return middle(nums, left, mid, lSum, rSum + rSumNew)
         else:
-            return middle(nums, mid + 1, right)
+            return middle(nums, mid + 1, right, lSum + lSumNew, rSum)
 
 
 if __name__ == '__main__':
@@ -18,8 +20,9 @@ if __name__ == '__main__':
             {'value': 2, 'weight': 0.3},
             {'value': 5, 'weight': 0.4}]
     nums.sort(key=getValue)
+    print(nums)
 
     if sum(num['weight'] for num in nums) == 1:
-        print(middle(nums, 0, len(nums)))
+        print(middle(nums, 0, len(nums), 0, 0))
     else:
         print('input wrong: ', sum(nums))

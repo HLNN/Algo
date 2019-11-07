@@ -2,7 +2,9 @@
 
 
 
-## 分治与递归
+## 分治与递归_old
+
+**注：这个解法是我一开始的时候对题目理解有问题。求的是权重的求和中位数，而不是元素的带权中位数。但这里面所用到的线性时间选择也是分治里面很有意思的一种解题思路，所以保留了下来，相关的程序原文件加了`_old`后缀。**
 
 ### 问题描述
 
@@ -57,6 +59,93 @@ if __name__ == '__main__':
 ```
 
 ### 运行结果
+
+```python
+# Input:
+# nums = [0.1, 0.2, 0.3, 0.4]
+```
+
+输入：四个元素权值。
+
+```python
+# Output:
+# 0.3
+```
+
+输出：带权中位数的值为`0.3`。
+
+![./pic/middle_old.png](./pic/middle_old.png)
+
+
+
+## 分治与递归
+
+### 问题描述
+
+设有n个互不相同的元素`x1,x2,…,xn`，每个元素`xi`带有一个权值`wi`，且所有元素权值之和为`1`。若元素`xk`满足比`xk`小的所有元素权值之和小于等于`1/2`且比`xk`大的所有元素权值之和小于等于`1/2`，则称元素`xk`为`x1,x2,…,xn`的带权中位数。请编写一个算法，能够在最坏情况下用`O(n)`时间找出`n`个元素的带权中位数。
+
+### 问题分析
+
+题目要求在`O(n)`的时间内从n个元素中选择一个符合要求的元素，故可考虑使用线性时间选择算法。
+
+### 算法设计
+
+- 直接二分查找分界点就行了。
+- 二分查找`n`层时间复杂度为`O(logn)`，每一层遍历求和一遍时间复杂度`O(n)`，这样总的时间复杂度为`O(nlogn)`超过了题目的要求。为了解决这个问题，可以把每一层查找之后，左右两侧固定下来的区域的元素权值和传递给下一层，这样全部`O(logn)`就只需要做`n`次求和了，将时间复杂度控制在`O(n)`。
+- 另外程序中的排序不是必须的，仅为方便检查结构，对元素的值做了升序处理。
+
+### 算法实现
+
+```python
+def middle(nums, left, right, lSum, rSum):
+    mid = (left + right) // 2
+    lSumNew = sum(n['weight'] for n in nums[left:mid])
+    rSumNew = sum(n['weight'] for n in nums[mid + 1:right])
+    if lSum + lSumNew <= 0.5 and rSum + rSumNew <= 0.5:
+        return nums[mid]['value']
+    else:
+        if lSum + lSumNew > 0.5:
+            return middle(nums, left, mid, lSum, rSum + rSumNew)
+        else:
+            return middle(nums, mid + 1, right, lSum + lSumNew, rSum)
+
+
+if __name__ == '__main__':
+    def getValue(elem):
+        return elem['value']
+
+    nums = [{'value': 1, 'weight': 0.1},
+            {'value': 4, 'weight': 0.2},
+            {'value': 2, 'weight': 0.3},
+            {'value': 5, 'weight': 0.4}]
+    nums.sort(key=getValue)
+    print(nums)
+
+    if sum(num['weight'] for num in nums) == 1:
+        print(middle(nums, 0, len(nums), 0, 0))
+    else:
+        print('input wrong: ', sum(nums))
+
+```
+
+### 运行结果
+
+```python
+# Input:
+# nums = [{'value': 1, 'weight': 0.1},
+#         {'value': 4, 'weight': 0.2},
+#         {'value': 2, 'weight': 0.3},
+#         {'value': 5, 'weight': 0.4}]
+```
+
+输入：四个元素的元素值和元素权重对。
+
+```python
+# Output:
+# 4
+```
+
+输出：带权中位数的值为`4`。
 
 ![./pic/middle.png](./pic/middle.png)
 
@@ -281,7 +370,7 @@ if __name__ == '__main__':
 None
 ```
 
-输入：无
+输入：无，随机生产数据无需输入。
 
 ```python
 # Output:
@@ -295,6 +384,8 @@ None
 
 
 ## 选做题
+
+**注：这个题目是在之前面那个回溯法的基础上重构而来的，通过修改`self.setNum`改变集合数量。**
 
 ### 问题描述
 
@@ -375,5 +466,19 @@ if __name__ == '__main__':
 ```
 
 ### 运行结果
+
+```python
+# Input:
+None
+```
+
+输入：无，随机生产数据无需输入。
+
+```python
+# Output:
+# 3 [[6], [12], [15]]
+```
+
+输出：`A`, `B`和`C`集合列数和，以及`A`, `B`和`C`所分别含有的列。
 
 ![./pic/set3.png](./pic/set3.png)
